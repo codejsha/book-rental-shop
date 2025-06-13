@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: bookrentalshop
+  datasource:
+    driver-class-name: org.h2.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:h2:mem:testdb;
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  flyway:
+    enabled: false
+
+logging:
+  level:
+    root: info
+
+app:
+  jwt:
+    signing-key: aW8uanNvbndlYnRva2VuLnNlY3VyaXR5
+    access-token-expiry: 10m
+    refresh-token-expiry: 1h
+  restdocs:
+    host: localhost
+    port: 8080
+    scheme: http

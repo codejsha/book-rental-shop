@@ -1,9 +1,5 @@
 package com.example.bookrentalshop.controller;
 
-import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
-import com.epages.restdocs.apispec.ResourceDocumentation;
-import com.epages.restdocs.apispec.ResourceSnippetParameters;
-import com.epages.restdocs.apispec.Schema;
 import com.example.bookrentalshop.controller.dto.BookCondition;
 import com.example.bookrentalshop.controller.dto.BookCreateRequest;
 import com.example.bookrentalshop.controller.dto.BookUpdateRequest;
@@ -13,11 +9,15 @@ import com.example.bookrentalshop.domain.entity.CategoryEntity;
 import com.example.bookrentalshop.domain.service.BookService;
 import com.example.bookrentalshop.support.restdocs.RestDocsControllerSupport;
 import com.example.bookrentalshop.support.security.filter.JwtAuthenticationFilter;
+
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
+import com.epages.restdocs.apispec.ResourceDocumentation;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
 import com.google.common.collect.Maps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,14 +32,16 @@ import java.util.Map;
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.context.annotation.ComponentScan.Filter;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = BookController.class,
-        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class))
+@WebMvcTest(
+        controllers = BookController.class,
+        excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)})
 class BookControllerTest extends RestDocsControllerSupport {
 
     @MockitoBean
@@ -50,6 +52,7 @@ class BookControllerTest extends RestDocsControllerSupport {
 
     @BeforeEach
     void setUp() {
+        // @formatter:off
         CategoryEntity CategoryAgile = CategoryEntity.builder().id(1).name("Agile").build();
         CategoryEntity CategorySoftwareArchitecture = CategoryEntity.builder().id(2).name("Software Architecture").build();
         CategoryEntity CategoryDataEngineering = CategoryEntity.builder().id(3).name("Data Engineering").build();
@@ -123,6 +126,7 @@ class BookControllerTest extends RestDocsControllerSupport {
         bookMap.put(book14.getId(), book14);
         bookMap.put(book15.getId(), book15);
         bookMap.put(book16.getId(), book16);
+        // @formatter:on
     }
 
     @Test
@@ -132,11 +136,11 @@ class BookControllerTest extends RestDocsControllerSupport {
         var books = bookMap.values().stream().toList();
         Page<BookEntity> bookPage = PageableExecutionUtils.getPage(books, pageable, books::size);
 
-        when(bookService.getAllBooks(any(BookCondition.class), any(Pageable.class))).thenReturn(bookPage);
+        when(bookService.getAllBooks(any(BookCondition.class), any(Pageable.class)))
+                .thenReturn(bookPage);
 
         // act
-        var execute = mockMvc.perform(get("/api/v1/books")
-                .accept(MediaType.APPLICATION_JSON));
+        var execute = mockMvc.perform(get("/api/v1/books").accept(MediaType.APPLICATION_JSON));
 
         // assert
         execute.andDo(print())
@@ -145,13 +149,15 @@ class BookControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("getAllBooks"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Book")
                         .summary("Find All Books")
                         .description("Finds all books with optional filters.")
                         .responseSchema(Schema.schema("Page<BookGetResponse>"))
                         .queryParameters(
+                                // @formatter:off
                                 parameterWithName("author").description("Book author").optional(),
                                 parameterWithName("title").description("Book title").optional(),
                                 parameterWithName("status").description("Book status").optional(),
@@ -159,8 +165,8 @@ class BookControllerTest extends RestDocsControllerSupport {
                                 parameterWithName("page").description("Page number").defaultValue("0").optional(),
                                 parameterWithName("size").description("Page size").defaultValue("10").optional(),
                                 parameterWithName("sort").description("Sorting").defaultValue("id,desc").optional())
-                        .build()
-                )));
+                                // @formatter:on
+                        .build())));
     }
 
     @Test
@@ -174,8 +180,13 @@ class BookControllerTest extends RestDocsControllerSupport {
                 .build();
         String categoryName = "Software Architecture";
         var category = categoryMap.get(categoryName);
-        var newBook = BookEntity.builder().id(17L).author("Hello").title("Architecture")
-                .status(BookStatus.AVAILABLE).category(category).build();
+        var newBook = BookEntity.builder()
+                .id(17L)
+                .author("Hello")
+                .title("Architecture")
+                .status(BookStatus.AVAILABLE)
+                .category(category)
+                .build();
 
         when(bookService.addBook(any(BookCreateRequest.class))).thenReturn(newBook);
 
@@ -193,7 +204,8 @@ class BookControllerTest extends RestDocsControllerSupport {
                 .andExpect(header().string("Location", "/api/v1/books/" + newBook.getId()));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Book")
                         .summary("Register Book")
@@ -206,8 +218,7 @@ class BookControllerTest extends RestDocsControllerSupport {
                                 fieldWithPath("category").description("Book category"))
                         .responseHeaders(
                                 headerWithName(HttpHeaders.LOCATION).description("Location of the created book"))
-                        .build()
-                )));
+                        .build())));
     }
 
     @Test
@@ -219,8 +230,7 @@ class BookControllerTest extends RestDocsControllerSupport {
         when(bookService.getBook(any(Long.class))).thenReturn(targetBook);
 
         // act
-        var execute = mockMvc.perform(get("/api/v1/books/{id}", bookId)
-                .accept(MediaType.APPLICATION_JSON));
+        var execute = mockMvc.perform(get("/api/v1/books/{id}", bookId).accept(MediaType.APPLICATION_JSON));
 
         // assert
         execute.andDo(print())
@@ -234,13 +244,13 @@ class BookControllerTest extends RestDocsControllerSupport {
                 .andExpect(jsonPath("$.category").value(targetBook.getCategory().getName()));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Book")
                         .summary("Find a Book")
                         .description("Finds a book by its ID.")
-                        .pathParameters(
-                                parameterWithName("id").description("Book ID"))
+                        .pathParameters(parameterWithName("id").description("Book ID"))
                         .responseSchema(Schema.schema("BookGetResponse"))
                         .responseFields(
                                 fieldWithPath("id").description("Book ID"),
@@ -248,8 +258,7 @@ class BookControllerTest extends RestDocsControllerSupport {
                                 fieldWithPath("title").description("Book title"),
                                 fieldWithPath("status").description("Book status"),
                                 fieldWithPath("category").description("Book category"))
-                        .build()
-                )));
+                        .build())));
     }
 
     @Test
@@ -270,7 +279,8 @@ class BookControllerTest extends RestDocsControllerSupport {
                 .category(categoryMap.get("Software Architecture"))
                 .build();
 
-        when(bookService.updateBook(any(Long.class), any(BookUpdateRequest.class))).thenReturn(updatedBook);
+        when(bookService.updateBook(any(Long.class), any(BookUpdateRequest.class)))
+                .thenReturn(updatedBook);
 
         // act
         var execute = mockMvc.perform(put("/api/v1/books/{id}", bookId)
@@ -287,22 +297,29 @@ class BookControllerTest extends RestDocsControllerSupport {
                 .andExpect(jsonPath("$.author").value(updatedBook.getAuthor()))
                 .andExpect(jsonPath("$.title").value(updatedBook.getTitle()))
                 .andExpect(jsonPath("$.status").value(updatedBook.getStatus().toString()))
-                .andExpect(jsonPath("$.category").value(updatedBook.getCategory().getName()));
+                .andExpect(
+                        jsonPath("$.category").value(updatedBook.getCategory().getName()));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Book")
                         .summary("Update Book")
                         .description("Updates an existing book by its ID.")
-                        .pathParameters(
-                                parameterWithName("id").description("Book ID"))
+                        .pathParameters(parameterWithName("id").description("Book ID"))
                         .requestSchema(Schema.schema("BookUpdateRequest"))
                         .requestFields(
-                                fieldWithPath("author").description("Book author").optional(),
+                                fieldWithPath("author")
+                                        .description("Book author")
+                                        .optional(),
                                 fieldWithPath("title").description("Book title").optional(),
-                                fieldWithPath("status").description("Book status").optional(),
-                                fieldWithPath("category").description("Book category").optional())
+                                fieldWithPath("status")
+                                        .description("Book status")
+                                        .optional(),
+                                fieldWithPath("category")
+                                        .description("Book category")
+                                        .optional())
                         .responseSchema(Schema.schema("BookUpdateResponse"))
                         .responseFields(
                                 fieldWithPath("id").description("Book ID"),
@@ -310,8 +327,7 @@ class BookControllerTest extends RestDocsControllerSupport {
                                 fieldWithPath("title").description("Book title"),
                                 fieldWithPath("status").description("Book status"),
                                 fieldWithPath("category").description("Book category"))
-                        .build()
-                )));
+                        .build())));
     }
 
     @Test
@@ -320,8 +336,7 @@ class BookControllerTest extends RestDocsControllerSupport {
         Long bookId = 1L;
 
         // act
-        var execute = mockMvc.perform(delete("/api/v1/books/{id}", bookId)
-                .accept(MediaType.APPLICATION_JSON));
+        var execute = mockMvc.perform(delete("/api/v1/books/{id}", bookId).accept(MediaType.APPLICATION_JSON));
 
         // assert
         execute.andDo(print())
@@ -330,14 +345,13 @@ class BookControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("deleteBook"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Book")
                         .summary("Delete Book")
                         .description("Deletes a book by its ID.")
-                        .pathParameters(
-                                parameterWithName("id").description("Book ID"))
-                        .build()
-                )));
+                        .pathParameters(parameterWithName("id").description("Book ID"))
+                        .build())));
     }
 }

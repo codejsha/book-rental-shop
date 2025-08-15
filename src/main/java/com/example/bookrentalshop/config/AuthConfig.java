@@ -1,6 +1,7 @@
 package com.example.bookrentalshop.config;
 
 import com.example.bookrentalshop.support.security.JwtAuthenticationProvider;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

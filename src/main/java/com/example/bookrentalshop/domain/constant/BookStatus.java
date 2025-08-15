@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 @Getter
 @RequiredArgsConstructor
 public enum BookStatus {
-
     UNKNOWN(Constants.UNKNOWN, "Unknown"),
     AVAILABLE(Constants.AVAILABLE, "Ready for Rental"),
     CHECKED_OUT(Constants.CHECKED_OUT, "Currently Checked Out");
@@ -23,6 +22,7 @@ public enum BookStatus {
             .collect(Collectors.toUnmodifiableMap(BookStatus::getStatus, Function.identity()));
 
     public static class Constants {
+
         public static final String UNKNOWN = "UNKNOWN";
         public static final String AVAILABLE = "AVAILABLE";
         public static final String CHECKED_OUT = "CHECKED_OUT";

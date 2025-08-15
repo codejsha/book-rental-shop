@@ -5,6 +5,7 @@ import com.example.bookrentalshop.controller.dto.BookGetResponse;
 import com.example.bookrentalshop.controller.dto.BookUpdateResponse;
 import com.example.bookrentalshop.domain.command.BookUpdateCommand;
 import com.example.bookrentalshop.domain.constant.BookStatus;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -94,11 +95,11 @@ public class BookEntity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof BookEntity book)) return false;
-        return Objects.equals(id, book.id)
-               && Objects.equals(author, book.author)
-               && Objects.equals(title, book.title)
-               && status == book.status
-               && Objects.equals(category, book.category);
+        return (Objects.equals(id, book.id)
+                && Objects.equals(author, book.author)
+                && Objects.equals(title, book.title)
+                && status == book.status
+                && Objects.equals(category, book.category));
     }
 
     @Override

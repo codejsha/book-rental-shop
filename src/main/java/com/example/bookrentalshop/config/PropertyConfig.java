@@ -5,5 +5,4 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationPropertiesScan(basePackages = "com.example.bookrentalshop.config.properties")
-public class PropertyConfig {
-}
+public class PropertyConfig {}

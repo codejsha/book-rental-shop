@@ -1,6 +1,7 @@
 package com.example.bookrentalshop.support.restdocs;
 
 import com.example.bookrentalshop.config.RestDocsConfig;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,8 +37,9 @@ public abstract class RestDocsControllerSupport {
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
-        this.serverUrl = String.format("%s://%s:%d", this.restDocsConfig.getScheme(),
-                this.restDocsConfig.getHost(), this.restDocsConfig.getPort());
+        this.serverUrl = String.format(
+                "%s://%s:%d",
+                this.restDocsConfig.getScheme(), this.restDocsConfig.getHost(), this.restDocsConfig.getPort());
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(MockMvcRestDocumentation.documentationConfiguration(provider)
                         .uris()
@@ -45,7 +47,8 @@ public abstract class RestDocsControllerSupport {
                         .withHost(this.restDocsConfig.getHost())
                         .withPort(this.restDocsConfig.getPort())
                         .and()
-                        .snippets().withEncoding("UTF-8"))
+                        .snippets()
+                        .withEncoding("UTF-8"))
                 .build();
     }
 }

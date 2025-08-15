@@ -15,6 +15,7 @@ import com.example.bookrentalshop.support.exception.rental.RentalNotAvailableExc
 import com.example.bookrentalshop.support.exception.rental.RentalReturnNotAllowedException;
 import com.example.bookrentalshop.support.security.JwtAuthenticationPrincipal;
 import com.example.bookrentalshop.support.security.JwtAuthenticationToken;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.querydsl.core.BooleanBuilder;
@@ -61,6 +62,7 @@ class RentalServiceTest {
 
     @BeforeEach
     void setUp() {
+        // @formatter:off
         CategoryEntity CategoryAgile = CategoryEntity.builder().id(1).name("Agile").build();
         CategoryEntity CategorySoftwareArchitecture = CategoryEntity.builder().id(2).name("Software Architecture").build();
         CategoryEntity CategoryDataEngineering = CategoryEntity.builder().id(3).name("Data Engineering").build();
@@ -134,6 +136,7 @@ class RentalServiceTest {
         bookMap.put(book14.getId(), book14);
         bookMap.put(book15.getId(), book15);
         bookMap.put(book16.getId(), book16);
+        // @formatter:on
     }
 
     @Nested
@@ -181,8 +184,13 @@ class RentalServiceTest {
             assertEquals(1, result.getTotalPages());
             assertEquals(2, result.getTotalElements());
 
-            assertThat(result.stream().map(RentalEntity::getId).toList()).containsExactlyInAnyOrder(1L, 2L);
-            assertThat(result.stream().map(RentalEntity::getBook).map(BookEntity::getId).toList()).containsExactlyInAnyOrder(4L, 5L);
+            var rentalIds = result.stream().map(RentalEntity::getId).toList();
+            var bookIds = result.stream()
+                    .map(RentalEntity::getBook)
+                    .map(BookEntity::getId)
+                    .toList();
+            assertThat(rentalIds).containsExactlyInAnyOrder(1L, 2L);
+            assertThat(bookIds).containsExactlyInAnyOrder(4L, 5L);
         }
 
         @Test
@@ -228,13 +236,15 @@ class RentalServiceTest {
 
             var accessToken = "access-token";
             var principal1 = new JwtAuthenticationPrincipal(user1.getId(), user1.getEmail());
-            var authPrincipal1 = new JwtAuthenticationToken(principal1, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
+            var authPrincipal1 =
+                    new JwtAuthenticationToken(principal1, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
 
             List<RentalEntity> rentals = Lists.newArrayList(rental1, rental2, rental3);
             List<RentalEntity> filteredRentals = rentals.stream()
                     .filter(rental -> rental.getUser().getId().equals(user1.getId()))
                     .toList();
-            Page<RentalEntity> rentalPage = PageableExecutionUtils.getPage(filteredRentals, pageable, filteredRentals::size);
+            Page<RentalEntity> rentalPage =
+                    PageableExecutionUtils.getPage(filteredRentals, pageable, filteredRentals::size);
 
             when(userRepository.findByEmail(user1.getEmail())).thenReturn(Optional.of(user1));
             when(rentalRepository.findAll(any(Predicate.class), eq(pageable))).thenReturn(rentalPage);
@@ -303,7 +313,8 @@ class RentalServiceTest {
                     .build();
             var accessToken = "access-token";
             var principal = new JwtAuthenticationPrincipal(user.getId(), user.getEmail());
-            var authPrincipal = new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
+            var authPrincipal =
+                    new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
 
             when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
             when(rentalRepository.findByIdAndUserId(rentalId, user.getId())).thenReturn(Optional.of(rental));
@@ -339,11 +350,10 @@ class RentalServiceTest {
                     .build();
             var accessToken = "access-token";
             var principal = new JwtAuthenticationPrincipal(user.getId(), user.getEmail());
-            var authPrincipal = new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
+            var authPrincipal =
+                    new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
 
-            var req = RentalCheckOutRequest.builder()
-                    .bookId(targetBook.getId())
-                    .build();
+            var req = RentalCheckOutRequest.builder().bookId(targetBook.getId()).build();
 
             when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
             when(bookRepository.findById(req.getBookId())).thenReturn(Optional.of(targetBook));
@@ -372,11 +382,10 @@ class RentalServiceTest {
                     .build();
             var accessToken = "access-token";
             var principal = new JwtAuthenticationPrincipal(user.getId(), user.getEmail());
-            var authPrincipal = new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
+            var authPrincipal =
+                    new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
 
-            var req = RentalCheckOutRequest.builder()
-                    .bookId(targetBook.getId())
-                    .build();
+            var req = RentalCheckOutRequest.builder().bookId(targetBook.getId()).build();
 
             when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
             when(bookRepository.findById(req.getBookId())).thenReturn(Optional.of(targetBook));
@@ -410,14 +419,13 @@ class RentalServiceTest {
                     .build();
             var accessToken = "access-token";
             var principal = new JwtAuthenticationPrincipal(user.getId(), user.getEmail());
-            var authPrincipal = new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
+            var authPrincipal =
+                    new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
 
             when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
             when(rentalRepository.findById(rental.getId())).thenReturn(Optional.of(rental));
-            when(rentalRepository.save(any(RentalEntity.class)))
-                    .thenAnswer(invocation -> invocation.getArgument(0));
-            when(bookRepository.save(any(BookEntity.class)))
-                    .thenAnswer(invocation -> invocation.getArgument(0));
+            when(rentalRepository.save(any(RentalEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            when(bookRepository.save(any(BookEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             // act
             RentalEntity result = rentalService.createReturn(rental.getId(), authPrincipal);
@@ -448,7 +456,8 @@ class RentalServiceTest {
                     .build();
             var accessToken = "access-token";
             var principal = new JwtAuthenticationPrincipal(user.getId(), user.getEmail());
-            var authPrincipal = new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
+            var authPrincipal =
+                    new JwtAuthenticationToken(principal, accessToken, UserAuthority.USER_DEFAULT_AUTHORITIES);
 
             when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
             when(rentalRepository.findById(rental.getId())).thenReturn(Optional.of(rental));

@@ -9,6 +9,7 @@ import com.example.bookrentalshop.domain.entity.CategoryEntity;
 import com.example.bookrentalshop.domain.entity.QBookEntity;
 import com.example.bookrentalshop.domain.model.CategoryModel;
 import com.example.bookrentalshop.repository.BookRepository;
+
 import com.google.common.collect.Maps;
 import com.querydsl.core.BooleanBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +47,7 @@ class BookServiceTest {
 
     @BeforeEach
     void setUp() {
+        // @formatter:off
         CategoryEntity CategoryAgile = CategoryEntity.builder().id(1).name("Agile").build();
         CategoryEntity CategorySoftwareArchitecture = CategoryEntity.builder().id(2).name("Software Architecture").build();
         CategoryEntity CategoryDataEngineering = CategoryEntity.builder().id(3).name("Data Engineering").build();
@@ -119,6 +121,7 @@ class BookServiceTest {
         bookMap.put(book14.getId(), book14);
         bookMap.put(book15.getId(), book15);
         bookMap.put(book16.getId(), book16);
+        // @formatter:on
     }
 
     @Nested
@@ -269,8 +272,13 @@ class BookServiceTest {
                     .build();
             String categoryName = "Software Architecture";
             var category = categoryMap.get(categoryName);
-            var newBook = BookEntity.builder().id(17L).author("Hello").title("Architecture")
-                    .status(BookStatus.AVAILABLE).category(category).build();
+            var newBook = BookEntity.builder()
+                    .id(17L)
+                    .author("Hello")
+                    .title("Architecture")
+                    .status(BookStatus.AVAILABLE)
+                    .category(category)
+                    .build();
 
             when(categoryModel.getNameMap()).thenReturn(categoryMap);
             when(bookRepository.save(any(BookEntity.class))).thenReturn(newBook);
@@ -347,11 +355,14 @@ class BookServiceTest {
             Long bookId = 1L;
             String changedCategory = "Software Architecture";
             var targetBook = bookMap.get(bookId);
-            var req = BookUpdateRequest.builder()
-                    .category(changedCategory)
+            var req = BookUpdateRequest.builder().category(changedCategory).build();
+            var updatedBook = BookEntity.builder()
+                    .id(bookId)
+                    .author("Martin Kleppmann")
+                    .title("Designing Data-Intensive Applications")
+                    .status(BookStatus.AVAILABLE)
+                    .category(categoryMap.get(changedCategory))
                     .build();
-            var updatedBook = BookEntity.builder().id(bookId).author("Martin Kleppmann").title("Designing Data-Intensive Applications")
-                    .status(BookStatus.AVAILABLE).category(categoryMap.get(changedCategory)).build();
 
             when(bookRepository.findById(bookId)).thenReturn(Optional.of(targetBook));
             when(categoryModel.getNameMap()).thenReturn(categoryMap);

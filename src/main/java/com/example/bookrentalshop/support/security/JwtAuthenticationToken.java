@@ -12,7 +12,10 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private final JwtAuthenticationPrincipal principal;
     private final String credentials;
 
-    public JwtAuthenticationToken(JwtAuthenticationPrincipal principal, String credentials, Collection<? extends GrantedAuthority> authorities) {
+    public JwtAuthenticationToken(
+            JwtAuthenticationPrincipal principal,
+            String credentials,
+            Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         super.setAuthenticated(true);
         this.principal = principal;

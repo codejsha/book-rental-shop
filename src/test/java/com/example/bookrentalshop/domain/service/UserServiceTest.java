@@ -9,6 +9,7 @@ import com.example.bookrentalshop.domain.entity.UserEntity;
 import com.example.bookrentalshop.domain.entity.UserRoleEntity;
 import com.example.bookrentalshop.repository.UserRepository;
 import com.example.bookrentalshop.repository.UserRoleRepository;
+
 import com.google.common.collect.Lists;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.Test;
@@ -49,10 +50,7 @@ class UserServiceTest {
     void loginUser_WhenCredentialsAreValid_ReturnsToken() {
         // arrange
         var roles = Lists.newArrayList(
-                UserAuthority.ROLE_BOOK_READ,
-                UserAuthority.ROLE_RENTAL_READ_OWNER,
-                UserAuthority.ROLE_RENTAL_REQUEST
-        );
+                UserAuthority.ROLE_BOOK_READ, UserAuthority.ROLE_RENTAL_READ_OWNER, UserAuthority.ROLE_RENTAL_REQUEST);
         var req = UserLoginRequest.builder()
                 .email("user1@example.com")
                 .password("password")
@@ -78,7 +76,8 @@ class UserServiceTest {
 
         when(userRepository.findByEmail(req.getEmail())).thenReturn(Optional.of(user));
         when(userRoleRepository.findAllByUserId(user.getId())).thenReturn(userRoles);
-        when(passwordEncoder.matches(req.getPassword(), userDetails.getPassword())).thenReturn(true);
+        when(passwordEncoder.matches(req.getPassword(), userDetails.getPassword()))
+                .thenReturn(true);
         when(tokenService.issueToken(any(UserEntity.class), ArgumentMatchers.<List<UserAuthority>>any()))
                 .thenReturn(token);
 
@@ -110,8 +109,7 @@ class UserServiceTest {
 
         when(userRepository.findByEmail(req.getEmail())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(req.getPassword())).thenReturn("encoded-password");
-        when(userRepository.save(any(UserEntity.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(userRepository.save(any(UserEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(userRoleRepository.saveAll(ArgumentMatchers.<List<UserRoleEntity>>any()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         when(tokenService.issueToken(any(UserEntity.class), ArgumentMatchers.<List<UserAuthority>>any()))
@@ -130,10 +128,7 @@ class UserServiceTest {
     void refreshUserToken_WhenTokenIsValid_ReturnsNewToken() {
         // arrange
         var roles = Lists.newArrayList(
-                UserAuthority.ROLE_BOOK_READ,
-                UserAuthority.ROLE_RENTAL_READ_OWNER,
-                UserAuthority.ROLE_RENTAL_REQUEST
-        );
+                UserAuthority.ROLE_BOOK_READ, UserAuthority.ROLE_RENTAL_READ_OWNER, UserAuthority.ROLE_RENTAL_REQUEST);
         var user = UserEntity.builder()
                 .id(1L)
                 .email("user1@example.com")
@@ -148,18 +143,16 @@ class UserServiceTest {
         String refreshToken = "refresh-token";
         var token = TokenEntity.newInstance(user, accessToken, refreshToken);
 
-        var req = RefreshRequest.builder()
-                .refreshToken(refreshToken)
-                .build();
-        var claims = Jwts.claims()
-                .subject(user.getId().toString())
-                .build();
+        var req = RefreshRequest.builder().refreshToken(refreshToken).build();
+        var claims = Jwts.claims().subject(user.getId().toString()).build();
 
+        // @formatter:off
         when(tokenService.decodeToken(req.getRefreshToken())).thenReturn(claims);
         when(userRepository.findById(Long.valueOf(claims.getSubject()))).thenReturn(Optional.of(user));
         when(userRoleRepository.findAllByUserId(user.getId())).thenReturn(userRoles);
         when(tokenService.reissueToken(any(UserEntity.class), ArgumentMatchers.<List<UserAuthority>>any(), any(String.class)))
                 .thenReturn(token);
+        // @formatter:on
 
         // act
         TokenEntity result = userService.refreshUserToken(req);

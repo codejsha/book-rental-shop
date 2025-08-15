@@ -4,6 +4,7 @@ import com.example.bookrentalshop.support.error.ErrorCode;
 import com.example.bookrentalshop.support.error.ErrorResponse;
 import com.example.bookrentalshop.support.exception.resource.ResourceAlreadyExistsException;
 import com.example.bookrentalshop.support.exception.resource.ResourceNotFoundException;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;

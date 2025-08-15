@@ -3,6 +3,7 @@ package com.example.bookrentalshop.domain.command;
 import com.example.bookrentalshop.controller.dto.BookUpdateRequest;
 import com.example.bookrentalshop.domain.constant.BookStatus;
 import com.example.bookrentalshop.domain.entity.CategoryEntity;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -28,8 +29,6 @@ public class BookUpdateCommand {
     }
 
     public static BookUpdateCommand from(BookStatus status) {
-        return BookUpdateCommand.builder()
-                .status(status)
-                .build();
+        return BookUpdateCommand.builder().status(status).build();
     }
 }

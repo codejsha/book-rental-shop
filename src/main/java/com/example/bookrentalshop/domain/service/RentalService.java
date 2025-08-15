@@ -16,6 +16,7 @@ import com.example.bookrentalshop.support.exception.rental.RentalNotAvailableExc
 import com.example.bookrentalshop.support.exception.rental.RentalReturnNotAllowedException;
 import com.example.bookrentalshop.support.exception.resource.BookNotFoundException;
 import com.example.bookrentalshop.support.exception.resource.RentalNotFoundException;
+
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,7 +42,8 @@ public class RentalService {
 
     @Transactional(readOnly = true)
     public Page<RentalEntity> getAllRentals(RentalCondition condition, Pageable pageable, Principal principal) {
-        var user = userRepository.findByEmail(principal.getName())
+        var user = userRepository
+                .findByEmail(principal.getName())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         var predicate = new BooleanBuilder();
         predicate.and(QRentalEntity.rentalEntity.user.id.eq(user.getId()));
@@ -62,13 +64,13 @@ public class RentalService {
 
     @Transactional(readOnly = true)
     public RentalEntity getRental(Long id) {
-        return rentalRepository.findById(id)
-                .orElseThrow(() -> new RentalNotFoundException(id));
+        return rentalRepository.findById(id).orElseThrow(() -> new RentalNotFoundException(id));
     }
 
     @Transactional(readOnly = true)
     public RentalEntity getRental(Long id, Principal principal) {
-        var user = userRepository.findByEmail(principal.getName())
+        var user = userRepository
+                .findByEmail(principal.getName())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         var rental = rentalRepository.findByIdAndUserId(id, user.getId());
         if (rental.isEmpty()) {
@@ -79,10 +81,11 @@ public class RentalService {
 
     @Transactional
     public RentalEntity createCheckOut(RentalCheckOutRequest req, Principal principal) {
-        var user = userRepository.findByEmail(principal.getName())
+        var user = userRepository
+                .findByEmail(principal.getName())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        var book = bookRepository.findById(req.getBookId())
-                .orElseThrow(() -> new BookNotFoundException(req.getBookId()));
+        var book =
+                bookRepository.findById(req.getBookId()).orElseThrow(() -> new BookNotFoundException(req.getBookId()));
         if (!book.isStatusAvailable()) {
             throw new RentalNotAvailableException("Book is not available for checkout");
         }
@@ -95,12 +98,12 @@ public class RentalService {
 
     @Transactional
     public RentalEntity createReturn(Long id, Principal principal) {
-        var user = userRepository.findByEmail(principal.getName())
+        var user = userRepository
+                .findByEmail(principal.getName())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         // set rental status to returned
-        var rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new RentalNotFoundException(id));
+        var rental = rentalRepository.findById(id).orElseThrow(() -> new RentalNotFoundException(id));
         if (rental.getReturnDate() != null) {
             throw new RentalAlreadyReturnedException(id);
         }

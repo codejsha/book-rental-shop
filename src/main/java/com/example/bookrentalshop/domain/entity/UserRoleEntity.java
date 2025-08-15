@@ -1,6 +1,7 @@
 package com.example.bookrentalshop.domain.entity;
 
 import com.example.bookrentalshop.domain.constant.UserAuthority;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,18 +27,15 @@ public class UserRoleEntity {
     private UserAuthority authority;
 
     public static UserRoleEntity newInstance(UserEntity user, UserAuthority authority) {
-        return UserRoleEntity.builder()
-                .user(user)
-                .authority(authority)
-                .build();
+        return UserRoleEntity.builder().user(user).authority(authority).build();
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof UserRoleEntity userRole)) return false;
-        return Objects.equals(id, userRole.id)
-               && Objects.equals(user, userRole.user)
-               && authority == userRole.authority;
+        return (Objects.equals(id, userRole.id)
+                && Objects.equals(user, userRole.user)
+                && authority == userRole.authority);
     }
 
     @Override

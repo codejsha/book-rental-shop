@@ -5,6 +5,7 @@ import com.example.bookrentalshop.domain.constant.BookStatus;
 import com.example.bookrentalshop.domain.entity.BookEntity;
 import com.example.bookrentalshop.domain.entity.CategoryEntity;
 import com.example.bookrentalshop.domain.entity.QBookEntity;
+
 import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,7 @@ class BookRepositoryCustomImplTest {
 
     @BeforeEach
     void setUp() {
+        // @formatter:off
         CategoryEntity CategoryAgile = CategoryEntity.builder().name("Agile").build();
         CategoryEntity CategorySoftwareArchitecture = CategoryEntity.builder().name("Software Architecture").build();
         CategoryEntity CategoryDataEngineering = CategoryEntity.builder().name("Data Engineering").build();
@@ -95,6 +97,7 @@ class BookRepositoryCustomImplTest {
         books.forEach(entityManager::persist);
 
         entityManager.flush();
+        // @formatter:on
     }
 
     @Test

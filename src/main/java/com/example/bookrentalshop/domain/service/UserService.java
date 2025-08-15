@@ -12,6 +12,7 @@ import com.example.bookrentalshop.repository.UserRoleRepository;
 import com.example.bookrentalshop.support.exception.auth.PasswordInvalidException;
 import com.example.bookrentalshop.support.exception.auth.UserNotFoundException;
 import com.example.bookrentalshop.support.exception.resource.ResourceAlreadyExistsException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,8 @@ public class UserService {
     @Transactional
     public TokenEntity loginUser(UserLoginRequest req) {
         // retrieve user info
-        var user = userRepository.findByEmail(req.getEmail())
+        var user = userRepository
+                .findByEmail(req.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         var roles = userRoleRepository.findAllByUserId(user.getId()).stream()
                 .map(UserRoleEntity::getAuthority)
@@ -74,7 +76,8 @@ public class UserService {
     public TokenEntity refreshUserToken(RefreshRequest req) {
         // retrieve user info
         var claims = tokenService.decodeToken(req.getRefreshToken());
-        var user = userRepository.findById(Long.valueOf(claims.getSubject()))
+        var user = userRepository
+                .findById(Long.valueOf(claims.getSubject()))
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         var roles = userRoleRepository.findAllByUserId(user.getId()).stream()
                 .map(UserRoleEntity::getAuthority)

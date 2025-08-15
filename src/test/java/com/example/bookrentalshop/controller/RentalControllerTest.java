@@ -1,9 +1,5 @@
 package com.example.bookrentalshop.controller;
 
-import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
-import com.epages.restdocs.apispec.ResourceDocumentation;
-import com.epages.restdocs.apispec.ResourceSnippetParameters;
-import com.epages.restdocs.apispec.Schema;
 import com.example.bookrentalshop.controller.dto.RentalCheckOutRequest;
 import com.example.bookrentalshop.controller.dto.RentalCondition;
 import com.example.bookrentalshop.domain.constant.BookStatus;
@@ -15,12 +11,16 @@ import com.example.bookrentalshop.domain.service.RentalService;
 import com.example.bookrentalshop.support.restdocs.RestDocsControllerSupport;
 import com.example.bookrentalshop.support.security.WithMockPrincipal;
 import com.example.bookrentalshop.support.security.filter.JwtAuthenticationFilter;
+
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
+import com.epages.restdocs.apispec.ResourceDocumentation;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,14 +37,16 @@ import java.util.Map;
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.context.annotation.ComponentScan.Filter;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = RentalController.class,
-        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class))
+@WebMvcTest(
+        controllers = RentalController.class,
+        excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)})
 class RentalControllerTest extends RestDocsControllerSupport {
 
     @MockitoBean
@@ -55,6 +57,7 @@ class RentalControllerTest extends RestDocsControllerSupport {
 
     @BeforeEach
     void setUp() {
+        // @formatter:off
         CategoryEntity CategoryAgile = CategoryEntity.builder().id(1).name("Agile").build();
         CategoryEntity CategorySoftwareArchitecture = CategoryEntity.builder().id(2).name("Software Architecture").build();
         CategoryEntity CategoryDataEngineering = CategoryEntity.builder().id(3).name("Data Engineering").build();
@@ -128,6 +131,7 @@ class RentalControllerTest extends RestDocsControllerSupport {
         bookMap.put(book14.getId(), book14);
         bookMap.put(book15.getId(), book15);
         bookMap.put(book16.getId(), book16);
+        // @formatter:on
     }
 
     @Test
@@ -157,11 +161,11 @@ class RentalControllerTest extends RestDocsControllerSupport {
         List<RentalEntity> rentals = Lists.newArrayList(rental1, rental2);
         Page<RentalEntity> rentalPage = PageableExecutionUtils.getPage(rentals, pageable, rentals::size);
 
-        when(rentalService.getAllRentals(any(RentalCondition.class), any(Pageable.class))).thenReturn(rentalPage);
+        when(rentalService.getAllRentals(any(RentalCondition.class), any(Pageable.class)))
+                .thenReturn(rentalPage);
 
         // act
-        var execute = mockMvc.perform(get("/api/v1/rentals")
-                .accept(MediaType.APPLICATION_JSON));
+        var execute = mockMvc.perform(get("/api/v1/rentals").accept(MediaType.APPLICATION_JSON));
 
         // assert
         execute.andDo(print())
@@ -170,20 +174,22 @@ class RentalControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("getAllRentals"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Rental")
                         .summary("Find all rentals")
                         .description("Find all rental records with optional filters.")
                         .responseSchema(Schema.schema("Page<RentalGetResponse>"))
                         .queryParameters(
+                                // @formatter:off
                                 parameterWithName("bookId").description("Book ID").optional(),
                                 parameterWithName("userId").description("User ID").optional(),
                                 parameterWithName("page").description("Page number").defaultValue("0").optional(),
                                 parameterWithName("size").description("Page size").defaultValue("10").optional(),
                                 parameterWithName("sort").description("Sorting").defaultValue("id,desc").optional())
-                        .build()
-                )));
+                                // @formatter:on
+                        .build())));
     }
 
     @Test
@@ -206,11 +212,10 @@ class RentalControllerTest extends RestDocsControllerSupport {
                 .returnDate(null)
                 .build();
 
-        var req = RentalCheckOutRequest.builder()
-                .bookId(bookId)
-                .build();
+        var req = RentalCheckOutRequest.builder().bookId(bookId).build();
 
-        when(rentalService.createCheckOut(any(RentalCheckOutRequest.class), any(Principal.class))).thenReturn(rental);
+        when(rentalService.createCheckOut(any(RentalCheckOutRequest.class), any(Principal.class)))
+                .thenReturn(rental);
 
         // act
         var execute = mockMvc.perform(post("/api/v1/rentals")
@@ -225,21 +230,20 @@ class RentalControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("checkOutRental"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Rental")
                         .summary("Rent a book")
                         .description("Rents a book for a user.")
                         .requestSchema(Schema.schema("RentalCheckOutRequest"))
-                        .requestFields(
-                                fieldWithPath("bookId").description("Book ID"))
+                        .requestFields(fieldWithPath("bookId").description("Book ID"))
                         .responseSchema(Schema.schema("RentalCheckOutResponse"))
                         .responseFields(
                                 fieldWithPath("bookId").description("Book ID"),
                                 fieldWithPath("userId").description("User ID"),
                                 fieldWithPath("checkOutDate").description("Check-out date"))
-                        .build()
-                )));
+                        .build())));
     }
 
     @Test
@@ -265,8 +269,7 @@ class RentalControllerTest extends RestDocsControllerSupport {
         when(rentalService.getRental(any(Long.class))).thenReturn(rental);
 
         // act
-        var execute = mockMvc.perform(get("/api/v1/rentals/{id}", rentalId)
-                .accept(MediaType.APPLICATION_JSON));
+        var execute = mockMvc.perform(get("/api/v1/rentals/{id}", rentalId).accept(MediaType.APPLICATION_JSON));
 
         // assert
         execute.andDo(print())
@@ -275,13 +278,13 @@ class RentalControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("getRental"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Rental")
                         .summary("Find rental by ID")
                         .description("Finds a rental record by its ID.")
-                        .pathParameters(
-                                parameterWithName("id").description("Rental ID"))
+                        .pathParameters(parameterWithName("id").description("Rental ID"))
                         .responseSchema(Schema.schema("RentalGetResponse"))
                         .responseFields(
                                 fieldWithPath("id").description("Rental ID"),
@@ -291,8 +294,7 @@ class RentalControllerTest extends RestDocsControllerSupport {
                                 fieldWithPath("userName").description("User name"),
                                 fieldWithPath("checkOutDate").description("Check-out date"),
                                 fieldWithPath("returnDate").description("Return date"))
-                        .build()
-                )));
+                        .build())));
     }
 
     @Test
@@ -318,8 +320,7 @@ class RentalControllerTest extends RestDocsControllerSupport {
         when(rentalService.createReturn(any(Long.class), any(Principal.class))).thenReturn(rental);
 
         // act
-        var execute = mockMvc.perform(put("/api/v1/rentals/{id}", bookId)
-                .accept(MediaType.APPLICATION_JSON));
+        var execute = mockMvc.perform(put("/api/v1/rentals/{id}", bookId).accept(MediaType.APPLICATION_JSON));
 
         // assert
         execute.andDo(print())
@@ -328,22 +329,20 @@ class RentalControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("returnRental"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Rental")
                         .summary("Return a book")
                         .description("Returns a rented book.")
-                        .pathParameters(
-                                parameterWithName("id").description("Rental ID")
-                        )
+                        .pathParameters(parameterWithName("id").description("Rental ID"))
                         .responseSchema(Schema.schema("RentalReturnResponse"))
                         .responseFields(
                                 fieldWithPath("bookId").description("Book ID"),
                                 fieldWithPath("userId").description("User ID"),
                                 fieldWithPath("checkOutDate").description("Check-out date"),
                                 fieldWithPath("returnDate").description("Return date"))
-                        .build()
-                )));
+                        .build())));
     }
 
     @Test
@@ -378,8 +377,7 @@ class RentalControllerTest extends RestDocsControllerSupport {
                 .thenReturn(rentalPage);
 
         // act
-        var execute = mockMvc.perform(get("/api/v1/rentals/my-rentals")
-                .accept(MediaType.APPLICATION_JSON));
+        var execute = mockMvc.perform(get("/api/v1/rentals/my-rentals").accept(MediaType.APPLICATION_JSON));
 
         // assert
         execute.andDo(print())
@@ -388,20 +386,33 @@ class RentalControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("getMyRentals"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Rental")
                         .summary("Find my rentals")
                         .description("Finds all rental records for the authenticated user.")
                         .responseSchema(Schema.schema("Page<RentalGetResponse>"))
                         .queryParameters(
-                                parameterWithName("bookId").description("Book ID").optional(),
-                                parameterWithName("userId").description("User ID").optional(),
-                                parameterWithName("page").description("Page number").defaultValue("0").optional(),
-                                parameterWithName("size").description("Page size").defaultValue("10").optional(),
-                                parameterWithName("sort").description("Sorting").defaultValue("id,desc").optional())
-                        .build()
-                )));
+                                parameterWithName("bookId")
+                                        .description("Book ID")
+                                        .optional(),
+                                parameterWithName("userId")
+                                        .description("User ID")
+                                        .optional(),
+                                parameterWithName("page")
+                                        .description("Page number")
+                                        .defaultValue("0")
+                                        .optional(),
+                                parameterWithName("size")
+                                        .description("Page size")
+                                        .defaultValue("10")
+                                        .optional(),
+                                parameterWithName("sort")
+                                        .description("Sorting")
+                                        .defaultValue("id,desc")
+                                        .optional())
+                        .build())));
     }
 
     @Test
@@ -424,8 +435,8 @@ class RentalControllerTest extends RestDocsControllerSupport {
         when(rentalService.getRental(any(Long.class), any(Principal.class))).thenReturn(rental);
 
         // act
-        var execute = mockMvc.perform(get("/api/v1/rentals/my-rentals/{id}", rental.getId())
-                .accept(MediaType.APPLICATION_JSON));
+        var execute = mockMvc.perform(
+                get("/api/v1/rentals/my-rentals/{id}", rental.getId()).accept(MediaType.APPLICATION_JSON));
 
         // assert
         execute.andDo(print())
@@ -434,13 +445,13 @@ class RentalControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("getMyRental"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("Rental")
                         .summary("Find my rental by ID")
                         .description("Finds a rental record by its ID.")
-                        .pathParameters(
-                                parameterWithName("id").description("Rental ID"))
+                        .pathParameters(parameterWithName("id").description("Rental ID"))
                         .responseSchema(Schema.schema("RentalGetResponse"))
                         .responseFields(
                                 fieldWithPath("id").description("Rental ID"),
@@ -450,7 +461,6 @@ class RentalControllerTest extends RestDocsControllerSupport {
                                 fieldWithPath("userName").description("User name"),
                                 fieldWithPath("checkOutDate").description("Check-out date"),
                                 fieldWithPath("returnDate").description("Return date"))
-                        .build()
-                )));
+                        .build())));
     }
 }

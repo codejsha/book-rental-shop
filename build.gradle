@@ -5,6 +5,7 @@ plugins {
     id 'org.springframework.boot' version '3.4.5'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.epages.restdocs-api-spec' version '0.18.2'
+    id 'com.diffplug.spotless' version '7.2.1'
 }
 
 group = 'com.example'
@@ -34,7 +35,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // database
-    implementation "org.flywaydb:flyway-mysql"
+    implementation 'org.flywaydb:flyway-mysql'
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'com.h2database:h2'
 
@@ -45,9 +46,9 @@ dependencies {
 
     // querydsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
-    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -71,4 +72,14 @@ openapi3 {
     description = 'BookRentalShop API Documentation'
     version = '0.0.1-SNAPSHOT'
     format = 'yaml'
+}
+
+spotless {
+    java {
+        toggleOffOn("@formatter:off", "@formatter:on")
+        palantirJavaFormat()
+        importOrder('com.example', '', 'java|javax', '\\#')
+        removeUnusedImports()
+        // formatAnnotations()
+    }
 }

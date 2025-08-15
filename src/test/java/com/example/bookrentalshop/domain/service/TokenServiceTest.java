@@ -5,6 +5,7 @@ import com.example.bookrentalshop.domain.entity.TokenEntity;
 import com.example.bookrentalshop.domain.entity.UserEntity;
 import com.example.bookrentalshop.repository.TokenRepository;
 import com.example.bookrentalshop.support.security.JwtTokenProvider;
+
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,10 +34,7 @@ class TokenServiceTest {
     void issueToken_WhenIssueToken_ShouldReturnToken() {
         // arrange
         var roles = Lists.newArrayList(
-                UserAuthority.ROLE_BOOK_READ,
-                UserAuthority.ROLE_RENTAL_READ_OWNER,
-                UserAuthority.ROLE_RENTAL_REQUEST
-        );
+                UserAuthority.ROLE_BOOK_READ, UserAuthority.ROLE_RENTAL_READ_OWNER, UserAuthority.ROLE_RENTAL_REQUEST);
         var user = UserEntity.builder()
                 .email("user@example.com")
                 .password("password")
@@ -76,10 +74,7 @@ class TokenServiceTest {
     void reissueToken_WhenRenewAccessToken_ShouldReturnToken() {
         // arrange
         var roles = Lists.newArrayList(
-                UserAuthority.ROLE_BOOK_READ,
-                UserAuthority.ROLE_RENTAL_READ_OWNER,
-                UserAuthority.ROLE_RENTAL_REQUEST
-        );
+                UserAuthority.ROLE_BOOK_READ, UserAuthority.ROLE_RENTAL_READ_OWNER, UserAuthority.ROLE_RENTAL_REQUEST);
         var user = UserEntity.builder()
                 .email("user@example.com")
                 .password("password")

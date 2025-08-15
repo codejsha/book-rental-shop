@@ -4,6 +4,7 @@ import com.example.bookrentalshop.controller.dto.RentalCheckOutResponse;
 import com.example.bookrentalshop.controller.dto.RentalGetResponse;
 import com.example.bookrentalshop.controller.dto.RentalReturnResponse;
 import com.example.bookrentalshop.domain.command.ReturnBookCommand;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -95,11 +96,11 @@ public class RentalEntity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof RentalEntity rental)) return false;
-        return Objects.equals(id, rental.id)
-               && Objects.equals(book, rental.book)
-               && Objects.equals(user, rental.user)
-               && Objects.equals(checkOutDate, rental.checkOutDate)
-               && Objects.equals(returnDate, rental.returnDate);
+        return (Objects.equals(id, rental.id)
+                && Objects.equals(book, rental.book)
+                && Objects.equals(user, rental.user)
+                && Objects.equals(checkOutDate, rental.checkOutDate)
+                && Objects.equals(returnDate, rental.returnDate));
     }
 
     @Override

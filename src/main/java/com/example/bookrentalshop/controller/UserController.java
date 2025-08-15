@@ -3,6 +3,7 @@ package com.example.bookrentalshop.controller;
 import com.example.bookrentalshop.controller.dto.*;
 import com.example.bookrentalshop.domain.entity.TokenEntity;
 import com.example.bookrentalshop.domain.service.UserService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -27,12 +28,9 @@ public class UserController {
 
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, cookieString);
-        var response = UserLoginResponse.builder()
-                .accessToken(token.getAccessToken())
-                .build();
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(response);
+        var response =
+                UserLoginResponse.builder().accessToken(token.getAccessToken()).build();
+        return ResponseEntity.ok().headers(headers).body(response);
     }
 
     @PostMapping("/register")
@@ -45,9 +43,7 @@ public class UserController {
         var response = UserRegisterResponse.builder()
                 .accessToken(token.getAccessToken())
                 .build();
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(response);
+        return ResponseEntity.ok().headers(headers).body(response);
     }
 
     @PostMapping("/refresh")
@@ -57,12 +53,9 @@ public class UserController {
 
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, cookieString);
-        var response = RefreshResponse.builder()
-                .accessToken(token.getAccessToken())
-                .build();
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(response);
+        var response =
+                RefreshResponse.builder().accessToken(token.getAccessToken()).build();
+        return ResponseEntity.ok().headers(headers).body(response);
     }
 
     private static String createRefreshTokenCookie(TokenEntity token) {

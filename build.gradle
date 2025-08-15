@@ -4,7 +4,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.5'
     id 'io.spring.dependency-management' version '1.1.7'
-    id 'com.epages.restdocs-api-spec' version '0.18.2'
+    id 'com.epages.restdocs-api-spec' version '0.18.2' apply false
+    id 'com.diffplug.spotless' version '7.2.1' apply false
 }
 
 group = 'com.example'
@@ -20,6 +21,11 @@ repositories {
     mavenCentral()
 }
 
+apply from: 'gradle/lombok.gradle'
+apply from: 'gradle/openapi.gradle'
+apply from: 'gradle/querydsl.gradle'
+apply from: 'gradle/spotless.gradle'
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -34,7 +40,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // database
-    implementation "org.flywaydb:flyway-mysql"
+    implementation 'org.flywaydb:flyway-mysql'
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'com.h2database:h2'
 
@@ -42,18 +48,6 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-
-    // querydsl
-    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
-    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
-
-    // lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
 
     implementation 'com.google.guava:guava:31.1-jre'
 }
@@ -63,12 +57,4 @@ test {
     testLogging {
         exceptionFormat = TestExceptionFormat.FULL
     }
-}
-
-openapi3 {
-    server = 'https://localhost:8080'
-    title = 'BookRentalShop API'
-    description = 'BookRentalShop API Documentation'
-    version = '0.0.1-SNAPSHOT'
-    format = 'yaml'
 }

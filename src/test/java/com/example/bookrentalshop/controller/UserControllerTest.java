@@ -1,9 +1,5 @@
 package com.example.bookrentalshop.controller;
 
-import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
-import com.epages.restdocs.apispec.ResourceDocumentation;
-import com.epages.restdocs.apispec.ResourceSnippetParameters;
-import com.epages.restdocs.apispec.Schema;
 import com.example.bookrentalshop.controller.dto.RefreshRequest;
 import com.example.bookrentalshop.controller.dto.UserLoginRequest;
 import com.example.bookrentalshop.controller.dto.UserRegisterRequest;
@@ -12,9 +8,13 @@ import com.example.bookrentalshop.domain.entity.UserEntity;
 import com.example.bookrentalshop.domain.service.UserService;
 import com.example.bookrentalshop.support.restdocs.RestDocsControllerSupport;
 import com.example.bookrentalshop.support.security.filter.JwtAuthenticationFilter;
+
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
+import com.epages.restdocs.apispec.ResourceDocumentation;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,6 +22,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.context.annotation.ComponentScan.Filter;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -29,8 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = UserController.class,
-        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class))
+@WebMvcTest(
+        controllers = UserController.class,
+        excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)})
 class UserControllerTest extends RestDocsControllerSupport {
 
     @MockitoBean
@@ -69,7 +71,8 @@ class UserControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("loginUser"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("User")
                         .summary("User Login")
@@ -79,12 +82,9 @@ class UserControllerTest extends RestDocsControllerSupport {
                                 fieldWithPath("email").description("User email"),
                                 fieldWithPath("password").description("User password"))
                         .responseSchema(Schema.schema("UserLoginResponse"))
-                        .responseFields(
-                                fieldWithPath("accessToken").description("Access token for the user"))
-                        .responseHeaders(
-                                headerWithName(HttpHeaders.SET_COOKIE).description("Refresh token cookie"))
-                        .build()
-                )));
+                        .responseFields(fieldWithPath("accessToken").description("Access token for the user"))
+                        .responseHeaders(headerWithName(HttpHeaders.SET_COOKIE).description("Refresh token cookie"))
+                        .build())));
     }
 
     @Test
@@ -121,7 +121,8 @@ class UserControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("registerUser"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("User")
                         .summary("User Registration")
@@ -132,12 +133,9 @@ class UserControllerTest extends RestDocsControllerSupport {
                                 fieldWithPath("password").description("User password"),
                                 fieldWithPath("name").description("User name"))
                         .responseSchema(Schema.schema("UserRegisterResponse"))
-                        .responseFields(
-                                fieldWithPath("accessToken").description("Access token for the user"))
-                        .responseHeaders(
-                                headerWithName(HttpHeaders.SET_COOKIE).description("Refresh token cookie"))
-                        .build()
-                )));
+                        .responseFields(fieldWithPath("accessToken").description("Access token for the user"))
+                        .responseHeaders(headerWithName(HttpHeaders.SET_COOKIE).description("Refresh token cookie"))
+                        .build())));
     }
 
     @Test
@@ -154,9 +152,7 @@ class UserControllerTest extends RestDocsControllerSupport {
         String refreshToken = "refresh-token";
         var token = TokenEntity.newInstance(user, accessToken, refreshToken);
 
-        var req = RefreshRequest.builder()
-                .refreshToken(refreshToken)
-                .build();
+        var req = RefreshRequest.builder().refreshToken(refreshToken).build();
 
         when(userService.refreshUserToken(any(RefreshRequest.class))).thenReturn(token);
 
@@ -173,20 +169,17 @@ class UserControllerTest extends RestDocsControllerSupport {
                 .andExpect(handler().methodName("refreshUserToken"));
 
         // document
-        execute.andDo(MockMvcRestDocumentationWrapper.document(OPENAPI_DOCUMENT_IDENTIFIER,
+        execute.andDo(MockMvcRestDocumentationWrapper.document(
+                OPENAPI_DOCUMENT_IDENTIFIER,
                 ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                         .tag("User")
                         .summary("User Token Refresh")
                         .description("Refresh(reissue) user access token using refresh token.")
                         .requestSchema(Schema.schema("RefreshRequest"))
-                        .requestFields(
-                                fieldWithPath("refreshToken").description("Refresh token"))
+                        .requestFields(fieldWithPath("refreshToken").description("Refresh token"))
                         .responseSchema(Schema.schema("RefreshResponse"))
-                        .responseFields(
-                                fieldWithPath("accessToken").description("Access token for the user"))
-                        .responseHeaders(
-                                headerWithName(HttpHeaders.SET_COOKIE).description("Refresh token cookie"))
-                        .build()
-                )));
+                        .responseFields(fieldWithPath("accessToken").description("Access token for the user"))
+                        .responseHeaders(headerWithName(HttpHeaders.SET_COOKIE).description("Refresh token cookie"))
+                        .build())));
     }
 }

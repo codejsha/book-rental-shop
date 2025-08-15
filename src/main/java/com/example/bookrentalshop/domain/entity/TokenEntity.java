@@ -43,10 +43,10 @@ public class TokenEntity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof TokenEntity token)) return false;
-        return Objects.equals(id, token.id)
-               && Objects.equals(user, token.user)
-               && Objects.equals(accessToken, token.accessToken)
-               && Objects.equals(refreshToken, token.refreshToken);
+        return (Objects.equals(id, token.id)
+                && Objects.equals(user, token.user)
+                && Objects.equals(accessToken, token.accessToken)
+                && Objects.equals(refreshToken, token.refreshToken));
     }
 
     @Override

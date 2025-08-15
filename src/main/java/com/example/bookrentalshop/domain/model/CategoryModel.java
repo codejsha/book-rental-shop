@@ -2,6 +2,7 @@ package com.example.bookrentalshop.domain.model;
 
 import com.example.bookrentalshop.domain.entity.CategoryEntity;
 import com.example.bookrentalshop.repository.CategoryRepository;
+
 import com.google.common.collect.Maps;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;

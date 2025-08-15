@@ -3,6 +3,7 @@ package com.example.bookrentalshop.controller;
 import com.example.bookrentalshop.controller.dto.*;
 import com.example.bookrentalshop.domain.entity.BookEntity;
 import com.example.bookrentalshop.domain.service.BookService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,8 +37,8 @@ public class BookController {
     @PreAuthorize("hasAnyAuthority('ROLE_BOOK_MANAGE', 'ROLE_ADMIN')")
     public ResponseEntity<Void> addBook(@Valid @RequestBody BookCreateRequest req) {
         var book = bookService.addBook(req);
-        return ResponseEntity.created(
-                URI.create("/api/v1/books/" + book.getId())).build();
+        return ResponseEntity.created(URI.create("/api/v1/books/" + book.getId()))
+                .build();
     }
 
     @GetMapping("/{id}")
@@ -49,8 +50,8 @@ public class BookController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_BOOK_MANAGE', 'ROLE_ADMIN')")
-    public ResponseEntity<BookUpdateResponse> updateBook(@PathVariable Long id,
-                                                         @Valid @RequestBody BookUpdateRequest req) {
+    public ResponseEntity<BookUpdateResponse> updateBook(
+            @PathVariable Long id, @Valid @RequestBody BookUpdateRequest req) {
         var book = bookService.updateBook(id, req);
         return ResponseEntity.ok(book.toUpdateResponse());
     }

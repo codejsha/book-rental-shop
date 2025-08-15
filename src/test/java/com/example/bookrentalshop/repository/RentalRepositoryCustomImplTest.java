@@ -3,6 +3,7 @@ package com.example.bookrentalshop.repository;
 import com.example.bookrentalshop.config.PersistenceConfig;
 import com.example.bookrentalshop.domain.constant.BookStatus;
 import com.example.bookrentalshop.domain.entity.*;
+
 import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +52,7 @@ class RentalRepositoryCustomImplTest {
 
     @BeforeEach
     void setUp() {
+        // @formatter:off
         CategoryEntity CategoryAgile = CategoryEntity.builder().name("Agile").build();
         CategoryEntity CategorySoftwareArchitecture = CategoryEntity.builder().name("Software Architecture").build();
         CategoryEntity CategoryDataEngineering = CategoryEntity.builder().name("Data Engineering").build();
@@ -111,6 +113,7 @@ class RentalRepositoryCustomImplTest {
         books.forEach(entityManager::persist);
 
         entityManager.flush();
+        // @formatter:on
     }
 
     @Test

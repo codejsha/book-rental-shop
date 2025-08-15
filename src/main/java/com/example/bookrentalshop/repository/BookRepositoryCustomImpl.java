@@ -2,6 +2,7 @@ package com.example.bookrentalshop.repository;
 
 import com.example.bookrentalshop.domain.entity.BookEntity;
 import com.example.bookrentalshop.domain.entity.QBookEntity;
+
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -43,10 +44,8 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(book.count())
-                .from(book)
-                .where(predicate);
+        JPAQuery<Long> countQuery =
+                jpaQueryFactory.select(book.count()).from(book).where(predicate);
 
         return PageableExecutionUtils.getPage(fetch, pageable, countQuery::fetchOne);
     }

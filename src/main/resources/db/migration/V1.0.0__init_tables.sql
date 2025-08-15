@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS book
     author      VARCHAR(255)                                 NOT NULL,
     title       VARCHAR(255)                                 NOT NULL,
     status      ENUM ('UNKNOWN', 'AVAILABLE', 'CHECKED_OUT') NOT NULL,
-    category_id SMALLINT                                     NOT NULL,
+    category_id INT                                          NOT NULL,
     created_at  TIMESTAMP                                    NOT NULL,
     updated_at  TIMESTAMP                                    NOT NULL,
     version     BIGINT DEFAULT 0,

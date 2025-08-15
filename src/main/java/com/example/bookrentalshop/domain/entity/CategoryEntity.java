@@ -22,8 +22,7 @@ public class CategoryEntity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof CategoryEntity category)) return false;
-        return Objects.equals(id, category.id)
-               && Objects.equals(name, category.name);
+        return Objects.equals(id, category.id) && Objects.equals(name, category.name);
     }
 
     @Override

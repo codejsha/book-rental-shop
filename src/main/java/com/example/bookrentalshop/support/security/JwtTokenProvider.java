@@ -3,6 +3,7 @@ package com.example.bookrentalshop.support.security;
 import com.example.bookrentalshop.config.properties.TokenConfig;
 import com.example.bookrentalshop.domain.constant.UserAuthority;
 import com.example.bookrentalshop.domain.entity.UserEntity;
+
 import com.google.common.collect.Lists;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,13 +14,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import javax.crypto.SecretKey;
 
 @Component
 @RequiredArgsConstructor
@@ -36,6 +37,8 @@ public class JwtTokenProvider {
     public String createAccessToken(UserEntity user, UserDetails userDetails) {
         var now = LocalDateTime.now();
         var expiry = now.plus(tokenConfig.getAccessTokenExpiry());
+        var authorities =
+                userDetails.getAuthorities().stream().map(Object::toString).toList();
 
         var claims = Jwts.claims()
                 .subject(user.getId().toString())
@@ -43,13 +46,10 @@ public class JwtTokenProvider {
                 .expiration(Date.from(expiry.atZone(ZoneId.of("Asia/Seoul")).toInstant()))
                 .add("email", userDetails.getUsername())
                 .add("type", "access")
-                .add("authorities", userDetails.getAuthorities().stream().map(Object::toString).toList())
+                .add("authorities", authorities)
                 .build();
 
-        var token = Jwts.builder()
-                .claims(claims)
-                .signWith(secretKey)
-                .compact();
+        var token = Jwts.builder().claims(claims).signWith(secretKey).compact();
         return token;
     }
 
@@ -67,10 +67,7 @@ public class JwtTokenProvider {
                 .add("type", "refresh")
                 .build();
 
-        var token = Jwts.builder()
-                .claims(claims)
-                .signWith(secretKey)
-                .compact();
+        var token = Jwts.builder().claims(claims).signWith(secretKey).compact();
         return token;
     }
 

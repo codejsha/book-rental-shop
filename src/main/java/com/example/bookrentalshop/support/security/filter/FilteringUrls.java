@@ -9,9 +9,6 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FilteringUrls {
 
-    public static final Set<String> PUBLIC_PATHS = Sets.newHashSet(
-            "/api/v1/users/login",
-            "/api/v1/users/register",
-            "/api/v1/users/refresh"
-    );
+    public static final Set<String> PUBLIC_PATHS =
+            Sets.newHashSet("/api/v1/users/login", "/api/v1/users/register", "/api/v1/users/refresh");
 }

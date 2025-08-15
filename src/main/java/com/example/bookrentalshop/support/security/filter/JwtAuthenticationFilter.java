@@ -2,6 +2,7 @@ package com.example.bookrentalshop.support.security.filter;
 
 import com.example.bookrentalshop.support.security.JwtAuthenticationToken;
 import com.example.bookrentalshop.support.security.JwtTokenProvider;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             var tokenString = authHeader.substring(7);
@@ -46,8 +48,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         var parser = PathPatternParser.defaultInstance;
         var path = PathContainer.parsePath(request.getServletPath());
 
-        return excludedPaths.stream()
-                .map(parser::parse)
-                .anyMatch(pattern -> pattern.matches(path));
+        return excludedPaths.stream().map(parser::parse).anyMatch(pattern -> pattern.matches(path));
     }
 }

@@ -1,0 +1,9 @@
+apply plugin: 'com.epages.restdocs-api-spec'
+
+openapi3 {
+    server = 'https://localhost:8080'
+    title = 'BookRentalShop API'
+    description = 'BookRentalShop API Documentation'
+    version = '0.0.1-SNAPSHOT'
+    format = 'yaml'
+}

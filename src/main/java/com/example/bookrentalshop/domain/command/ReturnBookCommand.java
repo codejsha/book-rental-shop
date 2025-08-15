@@ -12,8 +12,6 @@ public class ReturnBookCommand {
     private LocalDateTime returnDate;
 
     public static ReturnBookCommand create() {
-        return ReturnBookCommand.builder()
-                .returnDate(LocalDateTime.now())
-                .build();
+        return ReturnBookCommand.builder().returnDate(LocalDateTime.now()).build();
     }
 }

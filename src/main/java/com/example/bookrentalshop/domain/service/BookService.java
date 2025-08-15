@@ -11,6 +11,7 @@ import com.example.bookrentalshop.domain.entity.QBookEntity;
 import com.example.bookrentalshop.domain.model.CategoryModel;
 import com.example.bookrentalshop.repository.BookRepository;
 import com.example.bookrentalshop.support.exception.resource.BookNotFoundException;
+
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -58,8 +59,7 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public BookEntity getBook(Long id) {
-        return bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+        return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
     }
 
     @Transactional
@@ -92,16 +92,14 @@ public class BookService {
         }
 
         var command = BookUpdateCommand.from(req, status, category);
-        var book = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+        var book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
         book.update(command);
         return bookRepository.save(book);
     }
 
     @Transactional
     public void deleteBook(Long id) {
-        var book = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+        var book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
         bookRepository.delete(book);
     }
 }

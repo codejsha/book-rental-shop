@@ -4,6 +4,7 @@ import com.example.bookrentalshop.controller.dto.*;
 import com.example.bookrentalshop.domain.entity.RentalEntity;
 import com.example.bookrentalshop.domain.service.RentalService;
 import com.example.bookrentalshop.support.security.JwtAuthenticationPrincipal;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -50,8 +51,8 @@ public class RentalController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_RENTAL_REQUEST','ROLE_RENTAL_MANAGE', 'ROLE_ADMIN')")
-    public ResponseEntity<RentalReturnResponse> returnRental(@PathVariable Long id,
-                                                             @AuthenticationPrincipal JwtAuthenticationPrincipal principal) {
+    public ResponseEntity<RentalReturnResponse> returnRental(
+            @PathVariable Long id, @AuthenticationPrincipal JwtAuthenticationPrincipal principal) {
         var rental = rentalService.createReturn(id, principal);
         return ResponseEntity.ok(rental.toRentalReturnResponse());
     }
@@ -69,8 +70,8 @@ public class RentalController {
 
     @GetMapping("/my-rentals/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_RENTAL_READ_OWNER', 'ROLE_RENTAL_MANAGE', 'ROLE_ADMIN')")
-    public ResponseEntity<RentalGetResponse> getMyRental(@PathVariable Long id,
-                                                         @AuthenticationPrincipal JwtAuthenticationPrincipal principal) {
+    public ResponseEntity<RentalGetResponse> getMyRental(
+            @PathVariable Long id, @AuthenticationPrincipal JwtAuthenticationPrincipal principal) {
         var rental = rentalService.getRental(id, principal);
         return ResponseEntity.ok(rental.toRentalGetResponse());
     }

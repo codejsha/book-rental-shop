@@ -13,8 +13,7 @@ public class WithMockPrincipalSecurityContextFactory implements WithSecurityCont
         context.setAuthentication(new JwtAuthenticationToken(
                 new JwtAuthenticationPrincipal(annotation.id(), annotation.email()),
                 annotation.credentials(),
-                AuthorityUtils.createAuthorityList(annotation.authorities())
-        ));
+                AuthorityUtils.createAuthorityList(annotation.authorities())));
         return context;
     }
 }
